@@ -9,7 +9,7 @@
         <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
         <style>
             body {
-                background-color: #E6F2F5; /* 设置页面背景色为浅蓝色 */
+                background-color: #E6F2F5; 
             }
     
         </style>
@@ -18,7 +18,6 @@
             var localMessArr = [];
             window.onload = function() {
     
-                // 如果是刷新浏览器，则清空localStorage
                 if (performance.navigation.type === 1) {
                     localStorage.clear();
                 }
@@ -47,19 +46,9 @@
             };
     
             function submitForm() {
-                // 阻止表单默认的提交行为
-                // event.preventDefault();
-    
-                // 将输入内容保存到localStorage中
                 var query = document.getElementById("query").value;
                 localStorage.setItem("queryMemory", query);
-                // console.log("提交")
-                // 提交表单
-                // document.forms[0].submit();
                 console.log("提交完成")
-                //保存历史记录
-                
-                // saveHistory(query);
     
             }
             
@@ -72,20 +61,11 @@
             function saveHistory(query) {
     
                 console.log("saveHistory")
-                // setTimeout(() => {
-                //     console.log("延时保存历史记录")
-                // // 在这里执行其他操作，比如跳转页面等
-                // }, 5000);
-    
-                // 获取当前时间
                 var date = new Date();
                 var timestamp = date.getTime();
     
-                // 将输入内容和返回结果保存到localStorage中
-            // 将输入内容和返回结果保存到localStorage中
     
             var answer = document.getElementById("answerText").innerText;
-            // answer = timestamp;
                 var record = {
                     "timestamp": timestamp,
                     "query": query,
@@ -97,7 +77,6 @@
                     history = JSON.parse(history);
                     history.unshift(record);
                 } else {
-                    // 如果历史记录不存在，则创建一个新数组
                    
                     history = [record];
                 }
