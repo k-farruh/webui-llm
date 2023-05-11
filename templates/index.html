@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+        <title>Q&A system based on LLM + ADBPG Vector Database with Alibaba Cloud</title>
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            body {
+                background-color: #E6F2F5; /* 设置页面背景色为浅蓝色 */
+            }
+    
+        </style>
+        <script>
+    
+            var localMessArr = [];
+            window.onload = function() {
+    
+                // 如果是刷新浏览器，则清空localStorage
+                if (performance.navigation.type === 1) {
+                    localStorage.clear();
+                }
+    
+    
+                var queryMemory = localStorage.getItem("queryMemory");
+                if (queryMemory) {
+                    document.getElementById("query").value = queryMemory;
+                }
+    
+    
+                var answer = localStorage.getItem("answer");
+                var preAnswer = document.getElementById("answerText").innerText;
+                if(preAnswer && queryMemory){
+                    saveHistory(queryMemory)
+                }
+    
+                console.log("onload answer value" ,answer,preAnswer)
+                if (answer && queryMemory) {
+                    document.getElementById("answer").style.display = "block";
+                    document.getElementById("answerText").innerText = answer;
+                }
+    
+                showHistory();
+    
+            };
+    
+            function submitForm() {
+                // 阻止表单默认的提交行为
+                // event.preventDefault();
+    
+                // 将输入内容保存到localStorage中
+                var query = document.getElementById("query").value;
+                localStorage.setItem("queryMemory", query);
+                // console.log("提交")
+                // 提交表单
+                // document.forms[0].submit();
+                console.log("提交完成")
+                //保存历史记录
+                
+                // saveHistory(query);
+    
+            }
+            
+            function clearAll() {
+              localStorage.clear();
+              history.replaceState(null, null, location.href);
+              location.reload();
+            }
+    
+            function saveHistory(query) {
+    
+                console.log("saveHistory")
+                // setTimeout(() => {
+                //     console.log("延时保存历史记录")
+                // // 在这里执行其他操作，比如跳转页面等
+                // }, 5000);
+    
+                // 获取当前时间
+                var date = new Date();
+                var timestamp = date.getTime();
+    
+                // 将输入内容和返回结果保存到localStorage中
+            // 将输入内容和返回结果保存到localStorage中
+    
+            var answer = document.getElementById("answerText").innerText;
+            // answer = timestamp;
+                var record = {
+                    "timestamp": timestamp,
+                    "query": query,
+                    "answer": answer
+                };
+                var history = localStorage.getItem("history");
+                if (history) {
+    
+                    history = JSON.parse(history);
+                    history.unshift(record);
+                } else {
+                    // 如果历史记录不存在，则创建一个新数组
+                   
+                    history = [record];
+                }
+                localStorage.setItem("history", JSON.stringify(history));
+            }
+    
+            function showHistory() {
+                console.log("showHistory()");
+                var history = localStorage.getItem("history");
+                if (history) {
+                    history = JSON.parse(history);
+                    var historyHtml = "";
+                    for (var i = 0; i < history.length; i++) {
+                        var record = history[i];
+                        var date = new Date(record.timestamp);
+                        var query = record.query;
+                        var answer = record.answer;
+                        historyHtml += "<p>" + date.toLocaleString() + "</p>";
+                        historyHtml += "<p>Question: " + query + "</p>";
+                        historyHtml += "<p>answer: " + answer + "</p>";
+                        historyHtml += "<hr>";
+                    }
+                    document.getElementById("history").innerHTML = historyHtml;
+                    document.getElementById("history").style.display = "block";
+                } else {
+                    document.getElementById("history").style.display = "none";
+                }
+            }
+    
+        </script>
+    </head>
+    <body>
+        <div class="container mt-5">
+            <h1 class="mb-4">Q&A system based on LLM + ADBPG Vector Database with Alibaba Cloud</h1>
+            <form method="POST" onsubmit="submitForm()">
+                <div class="mb-3">
+                    <label for="query" class="form-label">Question</label>
+                    <textarea class="form-control" id="query" name="query" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Answer</button>
+                <button type="button" class="btn btn-danger" onclick="clearAll()">Clear All</button>
+            </form>
+            {% if answer %}
+                <div id="answer" class="mt-5" style="display: block;">
+                    <h2>Answer</h2>
+                    <p id="answerText">{{ answer }}</p>
+                </div>
+            {% else %}
+                <div id="answer" class="mt-5" style="display: none;">
+                    <h2>Answer</h2>
+                    <p id="answerText"></p>
+                </div>
+            {% endif %}
+            <div id="history" class="mt-5"></div>
+        </div>
+    </body>
+    </html>
+    
