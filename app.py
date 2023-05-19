@@ -32,7 +32,7 @@ def retrieve(query):
 
         # build our prompt with the retrieved contexts included
         prompt_start = (
-            "Pickup and delivery parcel. Answer the question based on the context below. don't try to make up an answern.\n\n" +
+            "Use 300 words to detailed answer the question based on the context below. don't try to make up an answer\n\n" +
             "Context:\n"
         )
         prompt_end = (
